@@ -1,4 +1,5 @@
 ﻿using AdminPage.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -18,8 +19,7 @@ namespace AdminPage.Controllers
 		[Authorize]
 		public IActionResult Index()
 		{
-			UsersViewModel users = new UsersViewModel();
-			users.Users = db.Users.ToList();
+			var users = db.Users.ToList();
 			return View("UsersView", users);
 		}
 
@@ -33,5 +33,41 @@ namespace AdminPage.Controllers
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
-	}
+        public IActionResult BlockUser(int userId)
+        {
+            var user = db.Users.Find(userId);
+            if (user != null)
+            {
+                user.Status = "Blocked";
+                db.SaveChanges();
+            }
+            HttpContext.SignOutAsync();
+            return RedirectToAction("Login", "Account");
+        }
+
+        [HttpPost]
+        public IActionResult UnblockUser(int userId)
+        {
+            var user = db.Users.Find(userId);
+            if (user != null)
+            {
+                user.Status = "Active";
+                db.SaveChanges();
+            }
+            return RedirectToAction("Login", "Account");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteUser(int userId)
+        {
+            var user = db.Users.Find(userId);
+            if (user != null)
+            {
+                db.Users.Remove(user);
+                db.SaveChanges();
+            }
+            HttpContext.SignOutAsync();
+            return RedirectToAction("Login", "Account");
+        }
+    }
 }

@@ -13,7 +13,7 @@ namespace AdminPage.Models
 		public string? Password { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastLogin { get; set; }
-        public bool Online { get; set; }
+        public string Status{ get; set; }
 	}
 
 	

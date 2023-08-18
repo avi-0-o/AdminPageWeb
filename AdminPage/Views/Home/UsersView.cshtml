@@ -1,44 +1,94 @@
-﻿@model UsersViewModel
+﻿@model List<User>
+
 @{
-	Layout = "_AdminPageLayout";
-	var users = Model.Users;
+    Layout = "_layout";
+    ViewData["Title"] = "Admin Page";
+    
 }
-@if (users.Count != 0)
-{
+<div class="btn-group" role="group" aria-label="Button group">
+    <form method="post" asp-action="BlockUser" class="d-inline-block">
+        <button type="submit" class="btn btn-outline-secondary mx-2" id="blockButton">
+			Block <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
+            </svg>
+        </button>
+        <input type="hidden" id="blockUserId" name="userId" value="" />
+    </form>
 
+    <form method="post" asp-action="UnblockUser" class="d-inline-block">
+        <button type="submit" class="btn btn-outline-primary mx-2" id="unblockButton">
+            Unblock <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock-fill" viewBox="0 0 16 16">
+                <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z" />
+            </svg>
+        </button>
+        <input type="hidden" id="unblockUserId" name="userId" value="" />
+    </form>
 
-	@foreach (var user in users)
-	{
-		<tr>
-			<th scope="row"> <input type="checkbox" checked=false id=@user.Id /></th>
-			<td >@user.Id</td>
-			<td >@user.Name</td>
-			<td >@user.Email</td>
-			<td >@user.CreatedDate</td>
-			<td >@user.LastLogin</td>
-			<td >@(user.Online ? "Online" : "Offline")</td>
-		</tr>
-	}
-	<script type="text/javascript">
+    <form method="post" asp-action="DeleteUser" class="d-inline-block">
+        <button type="submit" class="btn btn-danger mx-2" id="deleteButton">
+			Delete<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z" />
+            </svg>
+        </button>
+        <input type="hidden" id="deleteUserId" name="userId" value="" />
+    </form>
+</div>
 
-		const itemList = document.getElementById('itemList');
-		const selectAllBtn = document.getElementById('selectAll');
+<table id="usersTable" class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th scope="col" id="selectAll"> <input type="checkbox" /> </th>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Created</th>
+            <th scope="col">Last Logged In</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td><input type="checkbox" class="user-checkbox" data-id="@user.Id"></td>
+                <td>@user.Id</td>
+                <td>@user.Name</td>
+                <td>@user.Email</td>
+                <td>@user.CreatedDate</td>
+                <td>@user.LastLogin</td>
+                <td>@user.Status</td>
+            </tr>
+        }
+    </tbody>
 
-		
-		selectAllBtn.addEventListener('click', () => {
-			const checkboxes = itemList.querySelectorAll('.itemCheckbox');
-			checkboxes.forEach(checkbox => {
-				checkbox.checked = selectAllBtn.checked;
-			});
-		});
-		function getSelectedItems() {
-			const checkboxes = itemList.querySelectorAll('.itemCheckbox');
-			const selectedItems = Array.from(checkboxes)
-				.filter(checkbox => checkbox.checked)
-				.map(checkbox => checkbox.value);
-			return selectedItems;
-		}
+</table>
 
-	</script>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#blockButton').click(function () {
+                var userId = $('.user-checkbox:checked').data('id');
+                $('#blockUserId').val(userId);
+            });
 
+            $('#unblockButton').click(function () {
+                var userId = $('.user-checkbox:checked').data('id');
+                $('#unblockUserId').val(userId);
+            });
+
+            $('#deleteButton').click(function () {
+                var userId = $('.user-checkbox:checked').data('id');
+                $('#deleteUserId').val(userId);
+            });
+
+            $('#selectAll').click(function () {
+                $('.user-checkbox').prop('checked', this.checked);
+            });
+        });
+    </script>
 }
+
+
+	
+	
+

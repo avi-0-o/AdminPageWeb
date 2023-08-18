@@ -59,7 +59,7 @@ namespace AdminPage.Controllers
 				User user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
 				if (user == null)
 				{
-					db.Users.Add(new User { Email = model.Email, Password = model.Password, Online = true, CreatedDate = DateTime.Now, Name = model.Name });
+					db.Users.Add(new User { Email = model.Email, Password = model.Password, Status= "Active", CreatedDate = DateTime.Now, Name = model.Name });
 					await db.SaveChangesAsync();
 
 					await Authenticate(model.Email);
@@ -79,6 +79,7 @@ namespace AdminPage.Controllers
 			user.LastLogin = DateTime.Now;
 
 			db.Users.Update(user);
+			await db.SaveChangesAsync();
 			var claims = new List<Claim>
 			{
 				new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
