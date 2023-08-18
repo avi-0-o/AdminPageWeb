@@ -8,22 +8,19 @@ namespace AdminPage.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-
-		public HomeController(ILogger<HomeController> logger)
+		private UserContext db;
+		public HomeController(ILogger<HomeController> logger, UserContext context)
 		{
 			_logger = logger;
+			db = context;
 		}
 
-		//private UserContext db;
-		//public HomeController(UserContext context)
-		//{
-		//	db = context;
-		//}
 		[Authorize]
 		public IActionResult Index()
 		{
-			//var users = 
-			return View();
+			UsersViewModel users = new UsersViewModel();
+			users.Users = db.Users.ToList();
+			return View("UsersView", users);
 		}
 
 		public IActionResult Privacy()

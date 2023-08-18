@@ -1,6 +1,44 @@
-﻿
-@model UsersViewModel
+﻿@model UsersViewModel
 @{
-	Layout = "_adminpagelayout";
+	Layout = "_AdminPageLayout";
+	var users = Model.Users;
 }
+@if (users.Count != 0)
+{
 
+
+	@foreach (var user in users)
+	{
+		<tr>
+			<th scope="row"> <input type="checkbox" checked=false id=@user.Id /></th>
+			<td >@user.Id</td>
+			<td >@user.Name</td>
+			<td >@user.Email</td>
+			<td >@user.CreatedDate</td>
+			<td >@user.LastLogin</td>
+			<td >@(user.Online ? "Online" : "Offline")</td>
+		</tr>
+	}
+	<script type="text/javascript">
+
+		const itemList = document.getElementById('itemList');
+		const selectAllBtn = document.getElementById('selectAll');
+
+		
+		selectAllBtn.addEventListener('click', () => {
+			const checkboxes = itemList.querySelectorAll('.itemCheckbox');
+			checkboxes.forEach(checkbox => {
+				checkbox.checked = selectAllBtn.checked;
+			});
+		});
+		function getSelectedItems() {
+			const checkboxes = itemList.querySelectorAll('.itemCheckbox');
+			const selectedItems = Array.from(checkboxes)
+				.filter(checkbox => checkbox.checked)
+				.map(checkbox => checkbox.value);
+			return selectedItems;
+		}
+
+	</script>
+
+}
